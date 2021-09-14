@@ -1,10 +1,10 @@
 const { parentPort, threadId } = require('worker_threads');
 var Distance = require('geo-distance');
 
-// parentPort.on('message', (task) => {
-//     console.log(`running task on thread: ${threadId}`)
-//     parentPort.postMessage(addDataPerRow(task))
-// })
+parentPort.on('message', (task) => {
+    console.log(`running task on thread: ${threadId}`)
+    parentPort.postMessage(addDataPerRow(task))
+})
 
 function addDataPerRow(groupedData) {
     let prevRow='';
@@ -34,11 +34,9 @@ function addDataPerRow(groupedData) {
     })
 }
 
-
 function calcDistance(startPoint, endPoint) {
     var distance = Distance.between(startPoint, endPoint);
    return distance.human_readable().toString();
 }
-
 
 module.exports.calcDistance = calcDistance;
