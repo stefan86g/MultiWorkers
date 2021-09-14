@@ -3,8 +3,6 @@ const path = require('path');
 const os = require('os')
 const csv = require("./csv_handler")
 
-
-
 // os.cpus().length Replace this with variable from config
 const pool = new WorkerPool(os.cpus().length, path.resolve(__dirname, 'worker.js'));
 
