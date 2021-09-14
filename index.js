@@ -10,21 +10,28 @@ const pool = new WorkerPool(os.cpus().length, path.resolve(__dirname, 'worker.js
 
 (async () => {
     let vehicleData = await csv.read();
-
-    let aaa = await sendDataToWorkers(vehicleData);
-    let test = await csv.write(aaa);
+    let processedData = await sendDataToWorkers(vehicleData);
+    processedData.forEach(function(rowArray) {
+          csv.write(rowArray);
+    });
+    pool.close();
 })()
 
 let sendDataToWorkers = async (vehicleData)=>{
-    let vehicleDataWithDistance=[];
-    let groupedVehicleData = groupDataVehicleById(vehicleData)
+    let groupedVehicleData = groupDataVehicleById(vehicleData);
+    let promises = [];
+
     for await (const key of Object.keys(groupedVehicleData)) {
-        pool.runTask(groupedVehicleData[key], (err, result) => {
-            if (err) return reject(err)
-            vehicleDataWithDistance.push(result)
-          })
+        let p = new Promise((resolve, reject) => {
+            pool.runTask(  groupedVehicleData[key], (err, result) => {
+              if (err) return reject(err)
+              return resolve(result)
+            })
+          });
+          promises.push(p);
     }
-  return vehicleDataWithDistance;
+    let res = await Promise.all(promises);
+  return res;
 }
 
 

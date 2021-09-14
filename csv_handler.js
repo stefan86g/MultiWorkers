@@ -1,6 +1,7 @@
 
 const csv = require("csvtojson")
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
+const ObjectsToCsv = require('objects-to-csv');
 
 const read = async() => {
   const jsonArray = await csv().fromFile("coordinates_for_node_test.csv");
@@ -8,15 +9,8 @@ const read = async() => {
 }
 
 const write = async(data) => {
-  const csvWriter = createCsvWriter({
-    path: 'workersData.csv',
-    header: [
-        {id: 'name', title: 'NAME'},
-        {id: 'lang', title: 'LANGUAGE'}
-    ]
-});
-const result = await csvWriter.writeRecords(data);
-return result;
+const csv = new ObjectsToCsv(data);
+await csv.toDisk('./workersData.csv');
 }
 
  module.exports.read = read;
