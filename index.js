@@ -11,9 +11,7 @@ const pool = new WorkerPool(os.cpus().length, path.resolve(__dirname, 'worker.js
 (async () => {
     let vehicleData = await csv.read();
     let processedData = await sendDataToWorkers(vehicleData);
-    processedData.forEach(function(rowArray) {
-          csv.write(rowArray);
-    });
+    await csv.write(processedData.flat(2));
     pool.close();
 })()
 
@@ -34,7 +32,6 @@ let sendDataToWorkers = async (vehicleData)=>{
   return res;
 }
 
-
 let groupDataVehicleById =(carsData)=>{
     let groupedByVehicle={};
     carsData.forEach((item)=>{
@@ -47,7 +44,3 @@ let groupDataVehicleById =(carsData)=>{
        })
        return groupedByVehicle
 }
-
-
-
-
